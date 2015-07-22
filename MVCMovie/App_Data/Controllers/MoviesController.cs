@@ -15,10 +15,73 @@ namespace MVCMovie.Controllers
         private MovieDBContext db = new MovieDBContext();
 
         // GET: Movies
-        public ActionResult Index()
+
+        //
+        //public ActionResult Index(string searchString)
+        //{
+        //    var movies = from m in db.Movies
+        //                 select m;
+
+        //    if (!String.IsNullOrEmpty(searchString))
+        //    {
+        //        movies = movies.Where(s => s.title.Contains(searchString));
+        //    }
+
+        //    return View(movies);
+        //}
+
+        // change the signature of index method 
+        //public ActionResult Index(string id)
+        //{
+        //    string searchString = id;
+        //    var movies = from m in db.Movies
+        //                 select m;
+
+        //    if (!String.IsNullOrEmpty(searchString))
+        //    {
+        //        movies = movies.Where(s => s.Title.Contains(searchString));
+        //    }
+
+        //    return View(movies);
+        //}
+
+
+
+
+        //final method
+
+        public ActionResult Index(string movieGenre, string searchString)
         {
-            return View(db.Movies.ToList());
+            var GenreLst = new List<string>();
+
+            var GenreQry = from d in db.Movies
+                           orderby d.Genre
+                           select d.Genre;
+
+            GenreLst.AddRange(GenreQry.Distinct());
+            ViewBag.movieGenre = new SelectList(GenreLst);
+
+            var movies = from m in db.Movies
+                         select m;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                movies = movies.Where(s => s.title.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(movieGenre))
+            {
+                movies = movies.Where(x => x.Genre == movieGenre);
+            }
+
+            return View(movies);
         }
+
+
+        //public ActionResult Index()
+        //{
+        //    return View(db.Movies.ToList());
+        //}
 
         // GET: Movies/Details/5
         public ActionResult Details(int? id)
